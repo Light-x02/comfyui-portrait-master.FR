@@ -101,7 +101,7 @@ lists = load_lists()
 # 1) Portrait Master Base Character
 ########################################################
 
-class PortraitMasterBaseCharacter:
+class PortraitMasterBaseCharacterFR:
 
     def __init__(self):
         pass
@@ -524,7 +524,7 @@ class PortraitMasterBaseCharacter:
 # 2) Portrait Master Skin Details
 ########################################################
 
-class PortraitMasterSkinDetails:
+class PortraitMasterSkinDetailsFR:
 
     def __init__(self):
         pass
@@ -779,7 +779,7 @@ class PortraitMasterSkinDetails:
 # 3) Portrait Master Style & Pose
 ########################################################
 
-class PortraitMasterStylePose:
+class PortraitMasterStylePoseFR:
 
     def __init__(self):
         pass
@@ -978,7 +978,7 @@ class PortraitMasterStylePose:
 # 4) Portrait Master Makeup
 ########################################################
 
-class PortraitMasterMakeup:
+class PortraitMasterMakeupFR:
 
     def __init__(self):
         pass
@@ -1087,15 +1087,15 @@ class PortraitMasterMakeup:
 
 
 NODE_CLASS_MAPPINGS = {
-    "PortraitMasterBaseCharacter": PortraitMasterBaseCharacter,
-    "PortraitMasterSkinDetails": PortraitMasterSkinDetails,
-    "PortraitMasterStylePose": PortraitMasterStylePose,
-    "PortraitMasterMakeup": PortraitMasterMakeup
+    "PortraitMasterBaseCharacterFR": PortraitMasterBaseCharacterFR,
+    "PortraitMasterSkinDetailsFR": PortraitMasterSkinDetailsFR,
+    "PortraitMasterStylePoseFR": PortraitMasterStylePoseFR,
+    "PortraitMasterMakeupFR": PortraitMasterMakeupFR
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PortraitMasterBaseCharacter": "Portrait Master : Personnage de base",
-    "PortraitMasterSkinDetails": "Portrait Master : Détails de la peau",
-    "PortraitMasterStylePose": "Portrait Master : Style & Pose",
-    "PortraitMasterMakeup": "Portrait Master : Maquillage"
+    "PortraitMasterBaseCharacterFR": "Portrait Master : Personnage de base",
+    "PortraitMasterSkinDetailsFR": "Portrait Master : Détails de la peau",
+    "PortraitMasterStylePoseFR": "Portrait Master : Style & Pose",
+    "PortraitMasterMakeupFR": "Portrait Master : Maquillage"
 }
