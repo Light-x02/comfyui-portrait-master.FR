@@ -1,4 +1,5 @@
 # PORTRAIT MASTER
+# Modifié et traduit en français par Light-x02
 # Created by AI Wiz Art (Stefano Flore)
 # Version: 3.2.2
 # https://stefanoflore.it
@@ -61,7 +62,7 @@ def load_lists():
     global PROMPTS_MAP
     lists = {}
     
-    # On ajuste ci-dessous la liste de toutes les "catégories" qu'on veut charger
+    # Ajuster ci-dessous la liste de toutes les "catégories" à charger
     list_names = [
         "shot", "gender", "face_shape", "face_expression", "nationality",
         "hair_style", "light_type", "light_direction", "eyes_color",
@@ -75,9 +76,6 @@ def load_lists():
         list_path = os.path.join(script_dir, f"lists/{name}_list.json")
         data = read_json_file(list_path)
         
-        # On crée deux structures :
-        # 1) la liste de "name" (des chaînes) pour ComfyUI
-        # 2) un dict interne => PROMPTS_MAP[name][some_name] = some_prompt
         display_names = []
         PROMPTS_MAP[name] = {}
         
@@ -90,10 +88,9 @@ def load_lists():
                     display_names.append(n)
                     PROMPTS_MAP[name][n] = p
             
-            # Tri par ordre alphabétique du champ "name"
+            # Tri par ordre alphabétique
             display_names.sort()
         
-        # lists[name] contiendra uniquement les "names" (STR) à afficher
         lists[name] = display_names
     
     return lists
@@ -118,125 +115,125 @@ class PortraitMasterBaseCharacter:
                 "seed": ("INT", {"forceInput": True}),
             },
             "required": {
-                "shot": (['-'] + [rand_opt] + lists['shot'], {
+                "prise_de_vue": (['-'] + [rand_opt] + lists['shot'], {
                     "default": '-',
                 }),
-                "shot_weight": ("FLOAT", {
+                "poids_prise_de_vue": ("FLOAT", {
                     "default": 1,
                     "step": 0.05,
                     "min": 0,
                     "max": max_float_value,
                     "display": "slider",
                 }),
-                "gender": (['-'] + [rand_opt] + lists['gender'], {
+                "genre": (['-'] + [rand_opt] + lists['gender'], {
                     "default": '-',
                 }),
-                "androgynous": ("FLOAT", {
+                "androgynie": ("FLOAT", {
                     "default": 0,
                     "min": 0,
                     "max": max_float_value,
                     "step": 0.05,
                     "display": "slider",
                 }),
-                "ugly": ("FLOAT", {
+                "laid": ("FLOAT", {
                     "default": 0,
                     "min": 0,
                     "max": max_float_value,
                     "step": 0.05,
                     "display": "slider",
                 }),
-                "ordinary_face": ("FLOAT", {
+                "visage_ordinaire": ("FLOAT", {
                     "default": 0,
                     "min": 0,
                     "max": max_float_value,
                     "step": 0.05,
                     "display": "slider",
                 }),
-                "age": (['-'] + [rand_opt] + lists['age'], {
+                "âge": (['-'] + [rand_opt] + lists['age'], {
                     "default": '-',
                 }),
-                "nationality_1": (['-'] + [rand_opt] + lists['nationality'], {
+                "nationalite_1": (['-'] + [rand_opt] + lists['nationality'], {
                     "default": '-',
                 }),
-                "nationality_2": (['-'] + [rand_opt] + lists['nationality'], {
+                "nationalite_2": (['-'] + [rand_opt] + lists['nationality'], {
                     "default": '-',
                 }),
-                "nationality_mix": ("FLOAT", {
+                "nationalite_mix": ("FLOAT", {
                     "default": 0.5,
                     "min": 0,
                     "max": 1,
                     "step": 0.05,
                     "display": "slider",
                 }),
-                "body_type": (['-'] + [rand_opt] + lists['body_type'], {
+                "type_corps": (['-'] + [rand_opt] + lists['body_type'], {
                     "default": '-',
                 }),
-                "body_type_weight": ("FLOAT", {
+                "poids_type_corps": ("FLOAT", {
                     "default": 1,
                     "step": 0.05,
                     "min": 0,
                     "max": max_float_value,
                     "display": "slider",
                 }),
-                "eyes_color": (['-'] + [rand_opt] + lists['eyes_color'], {
+                "couleur_yeux": (['-'] + [rand_opt] + lists['eyes_color'], {
                     "default": '-',
                 }),
-                "eyes_shape": (['-'] + [rand_opt] + lists['eyes_shape'], {
+                "forme_yeux": (['-'] + [rand_opt] + lists['eyes_shape'], {
                     "default": '-',
                 }),
-                "lips_color": (['-'] + [rand_opt] + lists['lips_color'], {
+                "couleur_lèvres": (['-'] + [rand_opt] + lists['lips_color'], {
                     "default": '-',
                 }),
-                "lips_shape": (['-'] + [rand_opt] + lists['lips_shape'], {
+                "forme_lèvres": (['-'] + [rand_opt] + lists['lips_shape'], {
                     "default": '-',
                 }),
-                "facial_expression": (['-'] + [rand_opt] + lists['face_expression'], {
+                "expression_faciale": (['-'] + [rand_opt] + lists['face_expression'], {
                     "default": '-',
                 }),
-                "facial_expression_weight": ("FLOAT", {
+                "poids_expression_faciale": ("FLOAT", {
                     "default": 1,
                     "step": 0.05,
                     "min": 0,
                     "max": max_float_value,
                     "display": "slider",
                 }),
-                "face_shape": (['-'] + [rand_opt] + lists['face_shape'], {
+                "forme_visage": (['-'] + [rand_opt] + lists['face_shape'], {
                     "default": '-',
                 }),
-                "face_shape_weight": ("FLOAT", {
+                "poids_forme_visage": ("FLOAT", {
                     "default": 1,
                     "step": 0.05,
                     "min": 0,
                     "max": max_float_value,
                     "display": "slider",
                 }),
-                "facial_asymmetry": ("FLOAT", {
+                "asymetrie_faciale": ("FLOAT", {
                     "default": 0,
                     "min": 0,
                     "max": max_float_value,
                     "step": 0.05,
                     "display": "slider",
                 }),
-                "hair_style": (['-'] + [rand_opt] + lists['hair_style'], {
+                "style_cheveux": (['-'] + [rand_opt] + lists['hair_style'], {
                     "default": '-',
                 }),
-                "hair_color": (['-'] + [rand_opt] + lists['hair_color'], {
+                "couleur_cheveux": (['-'] + [rand_opt] + lists['hair_color'], {
                     "default": '-',
                 }),
-                "hair_length": (['-'] + [rand_opt] + lists['hair_length'], {
+                "longueur_cheveux": (['-'] + [rand_opt] + lists['hair_length'], {
                     "default": '-',
                 }),
-                "disheveled": ("FLOAT", {
+                "ebouriffe": ("FLOAT", {
                     "default": 0,
                     "min": 0,
                     "max": max_float_value,
                     "step": 0.05,
                     "display": "slider",
                 }),
-                "beard": (['-'] + [rand_opt] + lists['beard'], {
+                "barbe": (['-'] + [rand_opt] + lists['beard'], {
                     "default": '-',
                 }),
-                "beard_color": (['-'] + [rand_opt] + lists['beard_color'], {
+                "couleur_barbe": (['-'] + [rand_opt] + lists['beard_color'], {
                     "default": '-',
                 }),
                 "active": ("BOOLEAN", {"default": True}),
@@ -254,35 +251,62 @@ class PortraitMasterBaseCharacter:
             self,
             text_in='',
             seed=0,
-            shot='-',
-            shot_weight=1,
-            gender='-',
-            androgynous=0,
-            ugly=0,
-            ordinary_face=0,
-            age=30,
-            nationality_1='-',
-            nationality_2='-',
-            nationality_mix=0.5,
-            body_type='-',
-            body_type_weight=1,
-            eyes_color='-',
-            eyes_shape='-',
-            lips_color='-',
-            lips_shape='-',
-            facial_expression='-',
-            facial_expression_weight=1,
-            face_shape='-',
-            face_shape_weight=1,
-            facial_asymmetry=0,
-            hair_style='-',
-            hair_color='-',
-            hair_length='-',
-            disheveled=0,
-            beard='-',
-            beard_color='-',
+            prise_de_vue='-',
+            poids_prise_de_vue=1,
+            genre='-',
+            androgynie=0,
+            laid=0,
+            visage_ordinaire=0,
+            âge='-',
+            nationalite_1='-',
+            nationalite_2='-',
+            nationalite_mix=0.5,
+            type_corps='-',
+            poids_type_corps=1,
+            couleur_yeux='-',
+            forme_yeux='-',
+            couleur_lèvres='-',
+            forme_lèvres='-',
+            expression_faciale='-',
+            poids_expression_faciale=1,
+            forme_visage='-',
+            poids_forme_visage=1,
+            asymetrie_faciale=0,
+            style_cheveux='-',
+            couleur_cheveux='-',
+            longueur_cheveux='-',
+            ebouriffe=0,
+            barbe='-',
+            couleur_barbe='-',
             active=True
         ):
+
+        # Pour simplifier, on « mappe » nos variables FR vers des variables
+        # internes en anglais, afin de réutiliser la logique ci-dessous.
+        shot = prise_de_vue
+        shot_weight = poids_prise_de_vue
+        gender = genre
+        androgynous = androgynie
+        ugly = laid
+        ordinary_face = visage_ordinaire
+        age = âge
+        body_type = type_corps
+        body_type_weight = poids_type_corps
+        eyes_color = couleur_yeux
+        eyes_shape = forme_yeux
+        lips_color = couleur_lèvres
+        lips_shape = forme_lèvres
+        facial_expression = expression_faciale
+        facial_expression_weight = poids_expression_faciale
+        face_shape = forme_visage
+        face_shape_weight = poids_forme_visage
+        facial_asymmetry = asymetrie_faciale
+        hair_style = style_cheveux
+        hair_color = couleur_cheveux
+        hair_length = longueur_cheveux
+        disheveled = ebouriffe
+        beard = barbe
+        beard_color = couleur_barbe
 
         prompt = []
 
@@ -300,34 +324,32 @@ class PortraitMasterBaseCharacter:
 
         if active:
 
-            # Shot
+            # Prise de vue (anciennement 'shot')
             if shot_weight > 0:
                 if shot == rand_opt:
-                    chosen_shot = random.choice(lists['shot']) 
+                    chosen_shot = random.choice(lists['shot'])
                     shot_prompt = name_to_prompt('shot', chosen_shot)
                     prompt.append(applyWeight(shot_prompt, shot_weight))
                 elif shot != '-':
                     shot_prompt = name_to_prompt('shot', shot)
                     prompt.append(applyWeight(shot_prompt, shot_weight))
 
-            # Genre (gender)
+            # Genre
             if gender == rand_opt:
                 chosen_gender = random.choice(lists['gender'])
-                gender_opt = name_to_prompt('gender', chosen_gender) + ' '
+                gender_opt = name_to_prompt('gender', chosen_gender)
             elif gender != '-':
-                gender_opt = name_to_prompt('gender', gender) + ' '
+                gender_opt = name_to_prompt('gender', gender)
             else:
                 gender_opt = ''
 
             # Âge
             if age == rand_opt:
                 chosen_age = random.choice(lists['age'])
-                age_opt = name_to_prompt('age', chosen_age) + '-years-old'
-            elif age != '-':
-                # on suppose que la liste 'age' est quelque chose comme "30", "40" => 
-                # Si c'est un string, on va le mettre tel quel.
-                # Si c'est un name -> on mappe.
-                age_opt = name_to_prompt('age', str(age)) + '-years-old'
+                age_opt = ' ' + name_to_prompt('age', chosen_age) + '-years-old'
+            elif age != '-' and age != '':
+                # on suppose que la liste 'age' contient des valeurs "30", "40", etc.
+                age_opt = ' ' + name_to_prompt('age', str(age)) + '-years-old'
             else:
                 age_opt = ''
 
@@ -337,40 +359,42 @@ class PortraitMasterBaseCharacter:
             else:
                 androgynous_opt = ''
 
-            # Ugly
+            # Laid
             if ugly > 0:
                 ugly_opt = applyWeight('ugly', ugly) + ' '
             else:
                 ugly_opt = ''
 
-            # Nationalités
+            # Nationalité(s)
             nationality = ''
-            if nationality_1 != '-' or nationality_2 != '-':
-                if nationality_1 == rand_opt:
+            if nationalite_1 != '-' or nationalite_2 != '-':
+                if nationalite_1 == rand_opt:
                     chosen_nat1 = random.choice(lists['nationality'])
                     nat1_prompt = name_to_prompt('nationality', chosen_nat1)
                 else:
-                    nat1_prompt = name_to_prompt('nationality', nationality_1) if nationality_1 != '-' else ''
+                    nat1_prompt = name_to_prompt('nationality', nationalite_1) if nationalite_1 != '-' else ''
 
-                if nationality_2 == rand_opt:
+                if nationalite_2 == rand_opt:
                     chosen_nat2 = random.choice(lists['nationality'])
                     nat2_prompt = name_to_prompt('nationality', chosen_nat2)
                 else:
-                    nat2_prompt = name_to_prompt('nationality', nationality_2) if nationality_2 != '-' else ''
+                    nat2_prompt = name_to_prompt('nationality', nationalite_2) if nationalite_2 != '-' else ''
 
                 if nat1_prompt and nat2_prompt:
-                    mix_val = str(round(nationality_mix, 2))
+                    mix_val = str(round(nationalite_mix, 2))
                     nationality = f'[{nat1_prompt}:{nat2_prompt}:{mix_val}] '
                 else:
+                    # si l’une des deux est vide, on prend juste l’autre
                     nationality = (nat1_prompt + ' ') if nat1_prompt else (nat2_prompt + ' ' if nat2_prompt else '')
 
             # Regroupement (androgynous + ugly + nationality + gender + age)
-            if androgynous_opt + ugly_opt + nationality + gender_opt + age_opt != '':
-                t = f'({androgynous_opt}{ugly_opt}{nationality}{gender_opt}{age_opt}:1.15)'
-                t = t.strip()
-                prompt.append(t)
+            combo = androgynous_opt + ugly_opt + nationality + gender_opt + age_opt
+            if combo.strip():
+                # pour donner un « petit poids » global
+                t = f'({combo}:1.15)'
+                prompt.append(t.strip())
             
-            # Visage "ordinaire"
+            # Visage ordinaire
             if ordinary_face > 0:
                 prompt.append(applyWeight('ordinary face', ordinary_face))
 
@@ -388,10 +412,10 @@ class PortraitMasterBaseCharacter:
             if eyes_color == rand_opt:
                 chosen_eyes_color = random.choice(lists['eyes_color'])
                 eyes_color_prompt = name_to_prompt('eyes_color', chosen_eyes_color)
-                prompt.append(f"({eyes_color_prompt} eyes:1.05)")
+                prompt.append("(%s eyes:1.05)" % eyes_color_prompt)
             elif eyes_color != '-':
                 eyes_color_prompt = name_to_prompt('eyes_color', eyes_color)
-                prompt.append(f"({eyes_color_prompt} eyes:1.05)")
+                prompt.append("(%s eyes:1.05)" % eyes_color_prompt)
 
             # Forme des yeux
             if eyes_shape == rand_opt:
@@ -444,7 +468,7 @@ class PortraitMasterBaseCharacter:
             if facial_asymmetry > 0:
                 prompt.append(applyWeight('facial asymmetry, face asymmetry', facial_asymmetry))
 
-            # Coiffure (hair style, color, length)
+            # Coiffure (style, couleur, longueur)
             if hair_style == rand_opt:
                 chosen_hair_style = random.choice(lists['hair_style'])
                 hair_style_prompt = name_to_prompt('hair_style', chosen_hair_style)
@@ -476,18 +500,18 @@ class PortraitMasterBaseCharacter:
             if beard == rand_opt:
                 chosen_beard = random.choice(lists['beard'])
                 beard_prompt = name_to_prompt('beard', chosen_beard)
-                prompt.append(f"({beard_prompt}:1.05)\"")
+                prompt.append(f"({beard_prompt}:1.05)")
             elif beard != '-':
                 beard_prompt = name_to_prompt('beard', beard)
-                prompt.append(f"({beard_prompt}:1.05)\"")
+                prompt.append(f"({beard_prompt}:1.05)")
 
             if beard_color == rand_opt:
                 chosen_beard_color = random.choice(lists['beard_color'])
                 beard_color_prompt = name_to_prompt('beard_color', chosen_beard_color)
-                prompt.append(f"({beard_color_prompt} beard color:1.05)\"")
+                prompt.append(f"({beard_color_prompt} beard color:1.05)")
             elif beard_color != '-':
                 beard_color_prompt = name_to_prompt('beard_color', beard_color)
-                prompt.append(f"({beard_color_prompt} beard color:1.05)\"")
+                prompt.append(f"({beard_color_prompt} beard color:1.05)")
 
         if len(prompt) > 0:
             prompt = ', '.join(prompt)
@@ -514,119 +538,119 @@ class PortraitMasterSkinDetails:
                 "seed": ("INT", {"forceInput": True}),
             },
             "required": {
-                "natural_skin": ("FLOAT", {
+                "peau_naturelle": ("FLOAT", {
                     "default": 0,
                     "min": 0,
                     "max": max_float_value,
                     "step": 0.05,
                     "display": "slider",
                 }),
-                "bare_face": ("FLOAT", {
+                "visage_nu": ("FLOAT", {
                     "default": 0,
                     "min": 0,
                     "max": max_float_value,
                     "step": 0.05,
                     "display": "slider",
                 }),
-                "washed_face": ("FLOAT", {
+                "visage_lave": ("FLOAT", {
                     "default": 0,
                     "min": 0,
                     "max": max_float_value,
                     "step": 0.05,
                     "display": "slider",
                 }),
-                "dried_face": ("FLOAT", {
+                "visage_seche": ("FLOAT", {
                     "default": 0,
                     "min": 0,
                     "max": max_float_value,
                     "step": 0.05,
                     "display": "slider",
                 }),
-                "skin_details": ("FLOAT", {
+                "details_peau": ("FLOAT", {
                     "default": 0,
                     "min": 0,
                     "max": max_float_value,
                     "step": 0.05,
                     "display": "slider",
                 }),
-                "skin_pores": ("FLOAT", {
+                "pores_peau": ("FLOAT", {
                     "default": 0,
                     "min": 0,
                     "max": max_float_value,
                     "step": 0.05,
                     "display": "slider",
                 }),
-                "dimples": ("FLOAT", {
+                "fossettes": ("FLOAT", {
                     "default": 0,
                     "min": 0,
                     "max": max_float_value,
                     "step": 0.05,
                     "display": "slider",
                 }),
-                "wrinkles": ("FLOAT", {
+                "rides": ("FLOAT", {
                     "default": 0,
                     "min": 0,
                     "max": max_float_value,
                     "step": 0.05,
                     "display": "slider",
                 }),
-                "freckles": ("FLOAT", {
+                "taches_rousseur": ("FLOAT", {
                     "default": 0,
                     "min": 0,
                     "max": max_float_value,
                     "step": 0.05,
                     "display": "slider",
                 }),
-                "moles": ("FLOAT", {
+                "grains_de_beaute": ("FLOAT", {
                     "default": 0,
                     "min": 0,
                     "max": max_float_value,
                     "step": 0.05,
                     "display": "slider",
                 }),
-                "skin_imperfections": ("FLOAT", {
+                "imperfections_peau": ("FLOAT", {
                     "default": 0,
                     "min": 0,
                     "max": max_float_value,
                     "step": 0.05,
                     "display": "slider",
                 }),
-                "skin_acne": ("FLOAT", {
+                "acne_peau": ("FLOAT", {
                     "default": 0,
                     "min": 0,
                     "max": max_float_value,
                     "step": 0.05,
                     "display": "slider",
                 }),
-                "tanned_skin": ("FLOAT", {
+                "peau_bronzee": ("FLOAT", {
                     "default": 0,
                     "min": 0,
                     "max": max_float_value,
                     "step": 0.05,
                     "display": "slider",
                 }),
-                "eyes_details": ("FLOAT", {
+                "details_yeux": ("FLOAT", {
                     "default": 0,
                     "min": 0,
                     "max": max_float_value,
                     "step": 0.05,
                     "display": "slider",
                 }),
-                "iris_details": ("FLOAT", {
+                "details_iris": ("FLOAT", {
                     "default": 0,
                     "min": 0,
                     "max": max_float_value,
                     "step": 0.05,
                     "display": "slider",
                 }),
-                "circular_iris": ("FLOAT", {
+                "iris_circulaire": ("FLOAT", {
                     "default": 0,
                     "min": 0,
                     "max": max_float_value,
                     "step": 0.05,
                     "display": "slider",
                 }),
-                "circular_pupil": ("FLOAT", {
+                "pupille_circulaire": ("FLOAT", {
                     "default": 0,
                     "min": 0,
                     "max": max_float_value,
@@ -648,25 +672,43 @@ class PortraitMasterSkinDetails:
             self,
             text_in='',
             seed=0,
-            natural_skin=0,
-            bare_face=0,
-            washed_face=0,
-            dried_face=0,
-            skin_details=0,
-            skin_pores=0,
-            dimples=0,
-            wrinkles=0,
-            freckles=0,
-            moles=0,
-            skin_imperfections=0,
-            skin_acne=0,
-            tanned_skin=0,
-            eyes_details=0,
-            iris_details=0,
-            circular_iris=0,
-            circular_pupil=0,
+            peau_naturelle=0,
+            visage_nu=0,
+            visage_lave=0,
+            visage_seche=0,
+            details_peau=0,
+            pores_peau=0,
+            fossettes=0,
+            rides=0,
+            taches_rousseur=0,
+            grains_de_beaute=0,
+            imperfections_peau=0,
+            acne_peau=0,
+            peau_bronzee=0,
+            details_yeux=0,
+            details_iris=0,
+            iris_circulaire=0,
+            pupille_circulaire=0,
             active=True
     ):
+        # Mapping interne
+        natural_skin = peau_naturelle
+        bare_face = visage_nu
+        washed_face = visage_lave
+        dried_face = visage_seche
+        skin_details = details_peau
+        skin_pores = pores_peau
+        dimples = fossettes
+        wrinkles = rides
+        freckles = taches_rousseur
+        moles = grains_de_beaute
+        skin_imperfections = imperfections_peau
+        skin_acne = acne_peau
+        tanned_skin = peau_bronzee
+        eyes_details = details_yeux
+        iris_details = details_iris
+        circular_iris = iris_circulaire
+        circular_pupil = pupille_circulaire
 
         prompt = []
 
@@ -751,25 +793,25 @@ class PortraitMasterStylePose:
                 "seed": ("INT", {"forceInput": True}),
             },
             "required": {
-                "model_pose": (['-'] + [rand_opt] + lists['model_pose'], {
+                "pose_modele": (['-'] + [rand_opt] + lists['model_pose'], {
                     "default": '-',
                 }),
-                "clothes": (['-'] + [rand_opt] + lists['clothes'], {
+                "vetements": (['-'] + [rand_opt] + lists['clothes'], {
                     "default": '-',
                 }),
-                "female_lingerie": (['-'] + [rand_opt] + lists['female_lingerie'], {
+                "lingerie_feminine": (['-'] + [rand_opt] + lists['female_lingerie'], {
                     "default": '-',
                 }),
-                "makeup": (['-'] + [rand_opt] + lists['makeup'], {
+                "maquillage": (['-'] + [rand_opt] + lists['makeup'], {
                     "default": '-',
                 }),
-                "light_type": (['-'] + [rand_opt] + lists['light_type'], {
+                "type_lumiere": (['-'] + [rand_opt] + lists['light_type'], {
                     "default": '-',
                 }),
-                "light_direction": (['-'] + [rand_opt] + lists['light_direction'], {
+                "direction_lumiere": (['-'] + [rand_opt] + lists['light_direction'], {
                     "default": '-',
                 }),
-                "light_weight": ("FLOAT", {
+                "poids_lumiere": ("FLOAT", {
                     "default": 1,
                     "min": 0,
                     "max": max_float_value,
@@ -779,7 +821,7 @@ class PortraitMasterStylePose:
                 "style_1": (['-'] + [rand_opt] + lists['style'], {
                     "default": '-',
                 }),
-                "style_1_weight": ("FLOAT", {
+                "poids_style_1": ("FLOAT", {
                     "default": 1,
                     "min": 0,
                     "max": max_float_value,
@@ -789,14 +831,14 @@ class PortraitMasterStylePose:
                 "style_2": (['-'] + [rand_opt] + lists['style'], {
                     "default": '-',
                 }),
-                "style_2_weight": ("FLOAT", {
+                "poids_style_2": ("FLOAT", {
                     "default": 1,
                     "min": 0,
                     "max": max_float_value,
                     "step": 0.05,
                     "display": "slider",
                 }),
-                "photorealism_improvement": ("BOOLEAN", {"default": True}),
+                "amelioration_photorealisme": ("BOOLEAN", {"default": True}),
                 "active": ("BOOLEAN", {"default": True}),
             }
         }
@@ -812,21 +854,32 @@ class PortraitMasterStylePose:
             self,
             text_in='',
             seed=0,
-            model_pose='-',
-            clothes='-',
-            female_lingerie='-',
-            makeup='-',
-            light_type='-',
-            light_direction='-',
-            light_weight=1,
+            pose_modele='-',
+            vetements='-',
+            lingerie_feminine='-',
+            maquillage='-',
+            type_lumiere='-',
+            direction_lumiere='-',
+            poids_lumiere=1,
             style_1='-',
-            style_1_weight=1,
+            poids_style_1=1,
             style_2='-',
-            style_2_weight=1,
-            photorealism_improvement=False,
+            poids_style_2=1,
+            amelioration_photorealisme=True,
             active=True
     ):
-        
+        # Mapping interne
+        model_pose = pose_modele
+        clothes = vetements
+        female_lingerie = lingerie_feminine
+        makeup = maquillage
+        light_type = type_lumiere
+        light_direction = direction_lumiere
+        light_weight = poids_lumiere
+        style_1_weight = poids_style_1
+        style_2_weight = poids_style_2
+        photorealism_improvement = amelioration_photorealisme
+
         prompt = []
 
         def name_to_prompt(category, name_value):
@@ -873,41 +926,44 @@ class PortraitMasterStylePose:
                 lingerie_prompt = name_to_prompt('female_lingerie', female_lingerie)
                 prompt.append(f"({lingerie_prompt}:1.25)")
 
-            # Lumière (type + direction)
-            if light_type == rand_opt:
-                chosen_light_type = random.choice(lists['light_type'])
-                light_type_prompt = name_to_prompt('light_type', chosen_light_type)
-                prompt.append(applyWeight(light_type_prompt, light_weight))
-            elif light_type != '-':
-                light_type_prompt = name_to_prompt('light_type', light_type)
-                prompt.append(applyWeight(light_type_prompt, light_weight))
+            # Lumière
+            if light_weight > 0:
+                if light_type == rand_opt:
+                    chosen_light_type = random.choice(lists['light_type'])
+                    light_type_prompt = name_to_prompt('light_type', chosen_light_type)
+                    prompt.append(applyWeight(light_type_prompt, light_weight))
+                elif light_type != '-':
+                    light_type_prompt = name_to_prompt('light_type', light_type)
+                    prompt.append(applyWeight(light_type_prompt, light_weight))
 
-            if light_direction == rand_opt:
-                chosen_light_dir = random.choice(lists['light_direction'])
-                light_dir_prompt = name_to_prompt('light_direction', chosen_light_dir)
-                prompt.append(applyWeight(light_dir_prompt, light_weight))
-            elif light_direction != '-':
-                light_dir_prompt = name_to_prompt('light_direction', light_direction)
-                prompt.append(applyWeight(light_dir_prompt, light_weight))
+                if light_direction == rand_opt:
+                    chosen_light_dir = random.choice(lists['light_direction'])
+                    light_dir_prompt = name_to_prompt('light_direction', chosen_light_dir)
+                    prompt.append(applyWeight(light_dir_prompt, light_weight))
+                elif light_direction != '-':
+                    light_dir_prompt = name_to_prompt('light_direction', light_direction)
+                    prompt.append(applyWeight(light_dir_prompt, light_weight))
 
             # Styles 1 et 2
-            if style_1 == rand_opt:
-                chosen_style_1 = random.choice(lists['style'])
-                style_1_prompt = name_to_prompt('style', chosen_style_1)
-                prompt.append(applyWeight(style_1_prompt, style_1_weight))
-            elif style_1 != '-':
-                style_1_prompt = name_to_prompt('style', style_1)
-                prompt.append(applyWeight(style_1_prompt, style_1_weight))
+            if style_1_weight > 0:
+                if style_1 == rand_opt:
+                    chosen_style_1 = random.choice(lists['style'])
+                    style_1_prompt = name_to_prompt('style', chosen_style_1)
+                    prompt.append(applyWeight(style_1_prompt, style_1_weight))
+                elif style_1 != '-':
+                    style_1_prompt = name_to_prompt('style', style_1)
+                    prompt.append(applyWeight(style_1_prompt, style_1_weight))
 
-            if style_2 == rand_opt:
-                chosen_style_2 = random.choice(lists['style'])
-                style_2_prompt = name_to_prompt('style', chosen_style_2)
-                prompt.append(applyWeight(style_2_prompt, style_2_weight))
-            elif style_2 != '-':
-                style_2_prompt = name_to_prompt('style', style_2)
-                prompt.append(applyWeight(style_2_prompt, style_2_weight))
+            if style_2_weight > 0:
+                if style_2 == rand_opt:
+                    chosen_style_2 = random.choice(lists['style'])
+                    style_2_prompt = name_to_prompt('style', chosen_style_2)
+                    prompt.append(applyWeight(style_2_prompt, style_2_weight))
+                elif style_2 != '-':
+                    style_2_prompt = name_to_prompt('style', style_2)
+                    prompt.append(applyWeight(style_2_prompt, style_2_weight))
 
-            # Photoréalisme
+            # Amélioration photoréaliste
             if photorealism_improvement:
                 prompt.append('(professional photo, balanced photo, balanced exposure:1.2)')
 
@@ -936,18 +992,18 @@ class PortraitMasterMakeup:
                 "seed": ("INT", {"forceInput": True}),
             },
             "required": {
-                "makeup_style": (['-'] + [rand_opt] + lists['makeup'], {
+                "style_maquillage": (['-'] + [rand_opt] + lists['makeup'], {
                     "default": '-',
                 }),
-                "makeup_color": (['-'] + [rand_opt] + lists['makeup_color'], {
+                "couleur_maquillage": (['-'] + [rand_opt] + lists['makeup_color'], {
                     "default": '-',
                 }),
-                "eyeshadow": ("BOOLEAN", {"default": False}),
+                "fard_a_paupieres": ("BOOLEAN", {"default": False}),
                 "eyeliner": ("BOOLEAN", {"default": False}),
                 "mascara": ("BOOLEAN", {"default": False}),
                 "blush": ("BOOLEAN", {"default": False}),
-                "lipstick": ("BOOLEAN", {"default": False}),
-                "lip_gloss": ("BOOLEAN", {"default": False}),
+                "rouge_a_levres": ("BOOLEAN", {"default": False}),
+                "gloss_levres": ("BOOLEAN", {"default": False}),
                 "active": ("BOOLEAN", {"default": True}),
             }
         }
@@ -963,17 +1019,23 @@ class PortraitMasterMakeup:
             self,
             text_in='',
             seed=0,
-            makeup_style='-',
-            makeup_color='-',
-            eyeshadow=False,
+            style_maquillage='-',
+            couleur_maquillage='-',
+            fard_a_paupieres=False,
             eyeliner=False,
             mascara=False,
             blush=False,
-            lipstick=False,
-            lip_gloss=False,
-            active=True,
+            rouge_a_levres=False,
+            gloss_levres=False,
+            active=True
     ):
-        
+        # Mapping interne
+        makeup_style = style_maquillage
+        makeup_color = couleur_maquillage
+        eyeshadow = fard_a_paupieres
+        lipstick = rouge_a_levres
+        lip_gloss = gloss_levres
+
         prompt = []
 
         def name_to_prompt(category, name_value):
@@ -1032,8 +1094,8 @@ NODE_CLASS_MAPPINGS = {
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PortraitMasterBaseCharacter": "Portrait Master: Base Character",
-    "PortraitMasterSkinDetails": "Portrait Master: Skin Details",
-    "PortraitMasterStylePose": "Portrait Master: Style & Pose",
-    "PortraitMasterMakeup": "Portrait Master: Make-up"
+    "PortraitMasterBaseCharacter": "Portrait Master : Personnage de base",
+    "PortraitMasterSkinDetails": "Portrait Master : Détails de la peau",
+    "PortraitMasterStylePose": "Portrait Master : Style & Pose",
+    "PortraitMasterMakeup": "Portrait Master : Maquillage"
 }
