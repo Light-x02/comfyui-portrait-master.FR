@@ -1,0 +1,22 @@
+[
+    {"name": "Maquillage anime", "prompt": "Anime Makeup"},
+    {"name": "Maquillage artistique", "prompt": "Artistic Makeup"},
+    {"name": "Maquillage avant-garde", "prompt": "Avant-garde Makeup"},
+    {"name": "Maquillage bohème", "prompt": "Bohemian Makeup"},
+    {"name": "Maquillage boho", "prompt": "Boho Makeup"},
+    {"name": "Maquillage classique", "prompt": "Classic Makeup"},
+    {"name": "Maquillage cut crease", "prompt": "Cut Crease Makeup"},
+    {"name": "Maquillage rosé", "prompt": "Dewy Makeup"},
+    {"name": "Maquillage audacieux", "prompt": "Edgy Makeup"},
+    {"name": "Maquillage festival", "prompt": "Festival Makeup"},
+    {"name": "Maquillage glamour", "prompt": "Glam Makeup"},
+    {"name": "Maquillage lumineux", "prompt": "Glowy Makeup"},
+    {"name": "Maquillage doré", "prompt": "Golden Makeup"},
+    {"name": "Maquillage monochromatique", "prompt": "Monochromatic Makeup"},
+    {"name": "Maquillage naturel", "prompt": "Natural Makeup"},
+    {"name": "Maquillage de fête", "prompt": "Party Makeup"},
+    {"name": "Maquillage rétro", "prompt": "Retro Makeup"},
+    {"name": "Maquillage Sunset Eye", "prompt": "Sunset Eye Makeup"},
+    {"name": "Maquillage vintage", "prompt": "Vintage Makeup"},
+    {"name": "Maquillage aquarelle", "prompt": "Watercolor Makeup"}
+]

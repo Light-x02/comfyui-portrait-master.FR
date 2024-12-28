@@ -1,0 +1,23 @@
+[
+    {"name": "Auburn", "prompt": "Auburn"},
+    {"name": "Noir", "prompt": "Black"},
+    {"name": "Blond", "prompt": "Blonde"},
+    {"name": "Bourgogne", "prompt": "Burgundy"},
+    {"name": "Caramel", "prompt": "Caramel"},
+    {"name": "Châtain", "prompt": "Chestnut"},
+    {"name": "Chocolat", "prompt": "Chocolate"},
+    {"name": "Cuivre", "prompt": "Copper"},
+    {"name": "Sale", "prompt": "Dirty"},
+    {"name": "Gris", "prompt": "Gray"},
+    {"name": "Miel", "prompt": "Honey"},
+    {"name": "Noir de jais", "prompt": "Jet Black"},
+    {"name": "Acajou", "prompt": "Mahogany"},
+    {"name": "Multicolore", "prompt": "Multicolored"},
+    {"name": "Pastel", "prompt": "Pastel"},
+    {"name": "Platine", "prompt": "Platinum"},
+    {"name": "Rouge", "prompt": "Red"},
+    {"name": "Sel et poivre", "prompt": "Salt and pepper"},
+    {"name": "Argenté", "prompt": "Silver"},
+    {"name": "Fraise", "prompt": "Strawberry"},
+    {"name": "Blanc", "prompt": "White"}
+]

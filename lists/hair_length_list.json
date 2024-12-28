@@ -1,0 +1,5 @@
+[
+    {"name": "Court", "prompt": "Short"},
+    {"name": "Moyen", "prompt": "Medium"},
+    {"name": "Long", "prompt": "Long"}
+]

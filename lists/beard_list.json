@@ -1,0 +1,22 @@
+[
+    {"name": "Barbe de trois jours", "prompt": "Stubble Beard"},
+    {"name": "Bouc", "prompt": "Goatee"},
+    {"name": "Barbe complète", "prompt": "Full Beard"},
+    {"name": "Barbe Van Dyke", "prompt": "Van Dyke Beard"},
+    {"name": "Soul Patch", "prompt": "Soul Patch"},
+    {"name": "Barbe Garibaldi", "prompt": "Garibaldi Beard"},
+    {"name": "Favoris en côtelettes", "prompt": "Mutton Chops"},
+    {"name": "Bouc circulaire", "prompt": "Circle Beard"},
+    {"name": "Barbe d'entreprise", "prompt": "Corporate Beard"},
+    {"name": "Barbe Balbo", "prompt": "Balbo Beard"},
+    {"name": "Barbe queue de canard", "prompt": "Ducktail Beard"},
+    {"name": "Barbe en lanière", "prompt": "Chinstrap Beard"},
+    {"name": "Barbe ancre", "prompt": "Anchor Beard"},
+    {"name": "Moustache Chevron", "prompt": "Chevron Mustache"},
+    {"name": "Moustache fer à cheval", "prompt": "Horseshoe Mustache"},
+    {"name": "Moustache guidon", "prompt": "Handlebar Mustache"},
+    {"name": "Moustache impériale", "prompt": "Imperial Mustache"},
+    {"name": "Moustache crayon", "prompt": "Pencil Mustache"},
+    {"name": "Côtelettes amicales", "prompt": "Friendly Mutton Chops"},
+    {"name": "Moustache Zappa", "prompt": "Zappa Mustache"}
+]

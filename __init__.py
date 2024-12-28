@@ -6,46 +6,103 @@
 
 import os
 import random
-from .legacy import PortraitMaster
+import json
 
 script_dir = os.path.dirname(__file__)
 
-# read txt file
+########################################################
+# Dictionnaire global pour stocker la correspondance
+# name -> prompt, par catégorie
+########################################################
 
-def pmReadTxt(file_path):
-    with open(file_path, 'r') as file:
-        lines = file.readlines()
-        values = [line.strip() for line in lines]
-        return values
+PROMPTS_MAP = {}
 
-# apply weight
-    
+########################################################
+# Fonctions de lecture de JSON + extraction
+########################################################
+
+def read_json_file(file_path):
+    """
+    Lit le fichier JSON et retourne son contenu sous forme
+    d'objet Python (liste ou dictionnaire).
+    """
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            json_data = json.load(file)
+            return json_data
+    except Exception as e:
+        print(f"Une erreur est survenue lors de la lecture du fichier '{file_path}': {str(e)}")
+        return []
+
+########################################################
+# Fonction utilitaire pour gérer les poids
+########################################################
+
 def applyWeight(text, weight):
+    """
+    Applique un "poids" à un texte selon la syntaxe (monTexte:poids).
+    Si le poids est 1, on renvoie simplement le texte sans parenthèses.
+    """
     if weight == 1:
         return text
     else:
         return f"({text}:{round(weight,2)})"
 
-# global vars
+########################################################
+# Lecture des listes depuis des fichiers JSON
+# On crée deux structures :
+#   1) lists[name] : liste de STR (les 'name') pour ComfyUI
+#   2) PROMPTS_MAP[name][one_name] = correspondance vers 'prompt'
+########################################################
 
 rand_opt = 'random 🎲'
 
-# Load lists
-
 def load_lists():
+    global PROMPTS_MAP
     lists = {}
+    
+    # On ajuste ci-dessous la liste de toutes les "catégories" qu'on veut charger
     list_names = [
-        "shot", "gender", "face_shape", "face_expression", "nationality", "hair_style", "light_type", "light_direction", "eyes_color", "eyes_shape", "beard_color", "hair_color", "hair_length", "body_type", "beard", "model_pose", "style", "lips_shape", "lips_color", "makeup", "clothes", "age", "makeup_color", "female_lingerie"
+        "shot", "gender", "face_shape", "face_expression", "nationality",
+        "hair_style", "light_type", "light_direction", "eyes_color",
+        "eyes_shape", "beard_color", "hair_color", "hair_length",
+        "body_type", "beard", "model_pose", "style", "lips_shape",
+        "lips_color", "makeup", "clothes", "age", "makeup_color",
+        "female_lingerie"
     ]
+    
     for name in list_names:
-        list_path = os.path.join(script_dir, f"lists/{name}_list.txt")
-        lists[name] = pmReadTxt(list_path)
-        lists[name].sort()
+        list_path = os.path.join(script_dir, f"lists/{name}_list.json")
+        data = read_json_file(list_path)
+        
+        # On crée deux structures :
+        # 1) la liste de "name" (des chaînes) pour ComfyUI
+        # 2) un dict interne => PROMPTS_MAP[name][some_name] = some_prompt
+        display_names = []
+        PROMPTS_MAP[name] = {}
+        
+        if isinstance(data, list):
+            for item in data:
+                # item est censé être un dict {"name": "...", "prompt": "..."}
+                if isinstance(item, dict) and "name" in item and "prompt" in item:
+                    n = item["name"]
+                    p = item["prompt"]
+                    display_names.append(n)
+                    PROMPTS_MAP[name][n] = p
+            
+            # Tri par ordre alphabétique du champ "name"
+            display_names.sort()
+        
+        # lists[name] contiendra uniquement les "names" (STR) à afficher
+        lists[name] = display_names
+    
     return lists
 
 lists = load_lists()
 
-# Portrait Master Base Character
+########################################################
+# 1) Portrait Master Base Character
+########################################################
 
 class PortraitMasterBaseCharacter:
 
@@ -229,135 +286,219 @@ class PortraitMasterBaseCharacter:
 
         prompt = []
 
+        # Raccourci pour récupérer le prompt correspondant à un "name"
+        def name_to_prompt(category, name_value):
+            """
+            Retourne le 'prompt' associé au 'name_value' 
+            dans la catégorie correspondante, si trouvé.
+            Sinon, renvoie le name_value lui-même.
+            """
+            return PROMPTS_MAP.get(category, {}).get(name_value, name_value)
+
         if text_in != '':
             prompt.append(text_in)
 
         if active:
 
+            # Shot
             if shot_weight > 0:
                 if shot == rand_opt:
-                    prompt.append(applyWeight(random.choice(lists['shot']),shot_weight))
+                    chosen_shot = random.choice(lists['shot']) 
+                    shot_prompt = name_to_prompt('shot', chosen_shot)
+                    prompt.append(applyWeight(shot_prompt, shot_weight))
                 elif shot != '-':
-                    prompt.append(applyWeight(shot,shot_weight))
+                    shot_prompt = name_to_prompt('shot', shot)
+                    prompt.append(applyWeight(shot_prompt, shot_weight))
 
+            # Genre (gender)
             if gender == rand_opt:
-                gender_opt = random.choice(lists['gender']) + ' '
+                chosen_gender = random.choice(lists['gender'])
+                gender_opt = name_to_prompt('gender', chosen_gender) + ' '
             elif gender != '-':
-                gender_opt = gender + ' '
+                gender_opt = name_to_prompt('gender', gender) + ' '
             else:
                 gender_opt = ''
 
+            # Âge
             if age == rand_opt:
-                age_opt = random.choice(lists['age']) + '-years-old '
+                chosen_age = random.choice(lists['age'])
+                age_opt = name_to_prompt('age', chosen_age) + '-years-old'
             elif age != '-':
-                age_opt = f'{age}-years-old '
+                # on suppose que la liste 'age' est quelque chose comme "30", "40" => 
+                # Si c'est un string, on va le mettre tel quel.
+                # Si c'est un name -> on mappe.
+                age_opt = name_to_prompt('age', str(age)) + '-years-old'
             else:
                 age_opt = ''
 
+            # Androgynie
             if androgynous > 0:
-                androgynous_opt = applyWeight('androgynous',androgynous) + ' '
+                androgynous_opt = applyWeight('androgynous', androgynous) + ' '
             else:
                 androgynous_opt = ''
 
+            # Ugly
             if ugly > 0:
-                ugly_opt = applyWeight('ugly',ugly) + ' '
+                ugly_opt = applyWeight('ugly', ugly) + ' '
             else:
                 ugly_opt = ''
 
+            # Nationalités
             nationality = ''
             if nationality_1 != '-' or nationality_2 != '-':
-                nationality_1_opt = random.choice(lists['nationality']) if nationality_1 == rand_opt else nationality_1
-                nationality_2_opt = random.choice(lists['nationality']) if nationality_2 == rand_opt else nationality_2
-                if nationality_1_opt and nationality_2_opt and nationality_1_opt != '-' and nationality_2_opt != '-':
-                    nationality = f'[{nationality_1_opt}:{nationality_2_opt}:{str(round(nationality_mix, 2))}] '
+                if nationality_1 == rand_opt:
+                    chosen_nat1 = random.choice(lists['nationality'])
+                    nat1_prompt = name_to_prompt('nationality', chosen_nat1)
                 else:
-                    nationality = nationality_1_opt + ' ' if nationality_1_opt != '-' else nationality_2_opt + ' '
+                    nat1_prompt = name_to_prompt('nationality', nationality_1) if nationality_1 != '-' else ''
 
+                if nationality_2 == rand_opt:
+                    chosen_nat2 = random.choice(lists['nationality'])
+                    nat2_prompt = name_to_prompt('nationality', chosen_nat2)
+                else:
+                    nat2_prompt = name_to_prompt('nationality', nationality_2) if nationality_2 != '-' else ''
+
+                if nat1_prompt and nat2_prompt:
+                    mix_val = str(round(nationality_mix, 2))
+                    nationality = f'[{nat1_prompt}:{nat2_prompt}:{mix_val}] '
+                else:
+                    nationality = (nat1_prompt + ' ') if nat1_prompt else (nat2_prompt + ' ' if nat2_prompt else '')
+
+            # Regroupement (androgynous + ugly + nationality + gender + age)
             if androgynous_opt + ugly_opt + nationality + gender_opt + age_opt != '':
                 t = f'({androgynous_opt}{ugly_opt}{nationality}{gender_opt}{age_opt}:1.15)'
                 t = t.strip()
                 prompt.append(t)
             
+            # Visage "ordinaire"
             if ordinary_face > 0:
-                prompt.append(applyWeight('ordinary face',ordinary_face))
+                prompt.append(applyWeight('ordinary face', ordinary_face))
 
+            # Type de corps
             if body_type_weight > 0:
                 if body_type == rand_opt:
-                    prompt.append(applyWeight(random.choice(lists['body_type']) + ' body',body_type_weight))
+                    chosen_body = random.choice(lists['body_type'])
+                    body_prompt = name_to_prompt('body_type', chosen_body)
+                    prompt.append(applyWeight(body_prompt + ' body', body_type_weight))
                 elif body_type != '-':
-                    prompt.append(applyWeight(body_type,body_type_weight) + ' body')
+                    body_prompt = name_to_prompt('body_type', body_type)
+                    prompt.append(applyWeight(body_prompt + ' body', body_type_weight))
 
+            # Couleur des yeux
             if eyes_color == rand_opt:
-                prompt.append('(' + random.choice(lists['eyes_color']) + ' eyes:1.05)')
+                chosen_eyes_color = random.choice(lists['eyes_color'])
+                eyes_color_prompt = name_to_prompt('eyes_color', chosen_eyes_color)
+                prompt.append(f"({eyes_color_prompt} eyes:1.05)")
             elif eyes_color != '-':
-                prompt.append('(' + eyes_color + ' eyes:1.05)')
+                eyes_color_prompt = name_to_prompt('eyes_color', eyes_color)
+                prompt.append(f"({eyes_color_prompt} eyes:1.05)")
 
+            # Forme des yeux
             if eyes_shape == rand_opt:
-                prompt.append('(' + random.choice(lists['eyes_shape']) + ':1.05)')
+                chosen_eyes_shape = random.choice(lists['eyes_shape'])
+                eyes_shape_prompt = name_to_prompt('eyes_shape', chosen_eyes_shape)
+                prompt.append(f"({eyes_shape_prompt}:1.05)")
             elif eyes_shape != '-':
-                prompt.append('(' + eyes_shape + ':1.05)')
+                eyes_shape_prompt = name_to_prompt('eyes_shape', eyes_shape)
+                prompt.append(f"({eyes_shape_prompt}:1.05)")
 
+            # Couleur des lèvres
             if lips_color == rand_opt:
-                prompt.append('(' + random.choice(lists['lips_color']) + ':1.05)')
+                chosen_lips_color = random.choice(lists['lips_color'])
+                lips_color_prompt = name_to_prompt('lips_color', chosen_lips_color)
+                prompt.append(f"({lips_color_prompt}:1.05)")
             elif lips_color != '-':
-                prompt.append('(' + lips_color + ':1.05)')
+                lips_color_prompt = name_to_prompt('lips_color', lips_color)
+                prompt.append(f"({lips_color_prompt}:1.05)")
 
+            # Forme des lèvres
             if lips_shape == rand_opt:
-                prompt.append('(' + random.choice(lists['lips_shape']) + ':1.05)')
+                chosen_lips_shape = random.choice(lists['lips_shape'])
+                lips_shape_prompt = name_to_prompt('lips_shape', chosen_lips_shape)
+                prompt.append(f"({lips_shape_prompt}:1.05)")
             elif lips_shape != '-':
-                prompt.append('(' + lips_shape + ':1.05)')
+                lips_shape_prompt = name_to_prompt('lips_shape', lips_shape)
+                prompt.append(f"({lips_shape_prompt}:1.05)")
 
+            # Expression faciale
             if facial_expression_weight > 0:
                 if facial_expression == rand_opt:
-                    prompt.append(applyWeight(random.choice(lists['face_expression']),facial_expression_weight))
+                    chosen_expr = random.choice(lists['face_expression'])
+                    expr_prompt = name_to_prompt('face_expression', chosen_expr)
+                    prompt.append(applyWeight(expr_prompt, facial_expression_weight))
                 elif facial_expression != '-':
-                    prompt.append(applyWeight(facial_expression,facial_expression_weight))
+                    expr_prompt = name_to_prompt('face_expression', facial_expression)
+                    prompt.append(applyWeight(expr_prompt, facial_expression_weight))
 
+            # Forme du visage
             if face_shape_weight > 0:
                 if face_shape == rand_opt:
-                    prompt.append(applyWeight(random.choice(lists['face_shape']) + ' face-shape',face_shape_weight))
+                    chosen_face_shape = random.choice(lists['face_shape'])
+                    face_shape_prompt = name_to_prompt('face_shape', chosen_face_shape)
+                    prompt.append(applyWeight(face_shape_prompt + ' face-shape', face_shape_weight))
                 elif face_shape != '-':
-                    prompt.append(applyWeight(face_shape + ' face-shape',face_shape_weight))
+                    face_shape_prompt = name_to_prompt('face_shape', face_shape)
+                    prompt.append(applyWeight(face_shape_prompt + ' face-shape', face_shape_weight))
 
+            # Asymétrie faciale
             if facial_asymmetry > 0:
-                prompt.append(applyWeight('facial asymmetry, face asymmetry',facial_asymmetry))
-            
+                prompt.append(applyWeight('facial asymmetry, face asymmetry', facial_asymmetry))
+
+            # Coiffure (hair style, color, length)
             if hair_style == rand_opt:
-                prompt.append('(' + random.choice(lists['hair_style']) + ' hair style:1.05)')
+                chosen_hair_style = random.choice(lists['hair_style'])
+                hair_style_prompt = name_to_prompt('hair_style', chosen_hair_style)
+                prompt.append(f"({hair_style_prompt} hair style:1.05)")
             elif hair_style != '-':
-                prompt.append('(' + hair_style + ' hair style:1.05)')
-            
+                hair_style_prompt = name_to_prompt('hair_style', hair_style)
+                prompt.append(f"({hair_style_prompt} hair style:1.05)")
+
             if hair_color == rand_opt:
-                prompt.append('(' + random.choice(lists['hair_color']) + ' hair color:1.05)')
+                chosen_hair_color = random.choice(lists['hair_color'])
+                hair_color_prompt = name_to_prompt('hair_color', chosen_hair_color)
+                prompt.append(f"({hair_color_prompt} hair color:1.05)")
             elif hair_color != '-':
-                prompt.append('(' + hair_color + ' hair color:1.05)')
-            
+                hair_color_prompt = name_to_prompt('hair_color', hair_color)
+                prompt.append(f"({hair_color_prompt} hair color:1.05)")
+
             if hair_length == rand_opt:
-                prompt.append('(' + random.choice(lists['hair_length']) + ' hair length:1.05)')
+                chosen_hair_length = random.choice(lists['hair_length'])
+                hair_length_prompt = name_to_prompt('hair_length', chosen_hair_length)
+                prompt.append(f"({hair_length_prompt} hair length:1.05)")
             elif hair_length != '-':
-                prompt.append('(' + hair_length + ' hair length:1.05)')
+                hair_length_prompt = name_to_prompt('hair_length', hair_length)
+                prompt.append(f"({hair_length_prompt} hair length:1.05)")
 
             if disheveled > 0:
-                prompt.append(applyWeight('disheveled',disheveled))
+                prompt.append(applyWeight('disheveled', disheveled))
 
+            # Barbe
             if beard == rand_opt:
-                prompt.append('(' + random.choice(lists['beard']) + ':1.05)"')
+                chosen_beard = random.choice(lists['beard'])
+                beard_prompt = name_to_prompt('beard', chosen_beard)
+                prompt.append(f"({beard_prompt}:1.05)\"")
             elif beard != '-':
-                prompt.append('(' + beard + ':1.05)"')
+                beard_prompt = name_to_prompt('beard', beard)
+                prompt.append(f"({beard_prompt}:1.05)\"")
 
             if beard_color == rand_opt:
-                prompt.append('(' + random.choice(lists['beard_color']) + ' beard color:1.05)"')
+                chosen_beard_color = random.choice(lists['beard_color'])
+                beard_color_prompt = name_to_prompt('beard_color', chosen_beard_color)
+                prompt.append(f"({beard_color_prompt} beard color:1.05)\"")
             elif beard_color != '-':
-                prompt.append('(' + beard_color + ' beard color:1.05)"')
+                beard_color_prompt = name_to_prompt('beard_color', beard_color)
+                prompt.append(f"({beard_color_prompt} beard color:1.05)\"")
 
         if len(prompt) > 0:
             prompt = ', '.join(prompt)
             prompt = prompt.lower()
-            return(prompt,)
+            return (prompt,)
         else:
-            return('',)
+            return ('',)
 
-# Portrait Master Skin Details
+########################################################
+# 2) Portrait Master Skin Details
+########################################################
 
 class PortraitMasterSkinDetails:
 
@@ -535,64 +676,66 @@ class PortraitMasterSkinDetails:
         if active:
 
             if natural_skin > 0:
-                prompt.append(applyWeight('natural skin',natural_skin))
+                prompt.append(applyWeight('natural skin', natural_skin))
 
             if bare_face > 0:
-                prompt.append(applyWeight('bare face',bare_face))
+                prompt.append(applyWeight('bare face', bare_face))
 
             if washed_face > 0:
-                prompt.append(applyWeight('washed-face',washed_face))
+                prompt.append(applyWeight('washed-face', washed_face))
 
             if dried_face > 0:
-                prompt.append(applyWeight('dried-face',dried_face))
+                prompt.append(applyWeight('dried-face', dried_face))
 
             if skin_details > 0:
-                prompt.append(applyWeight('detailed skin',skin_details))
+                prompt.append(applyWeight('detailed skin', skin_details))
 
             if skin_pores > 0:
-                prompt.append(applyWeight('skin pores',skin_pores))
+                prompt.append(applyWeight('skin pores', skin_pores))
 
             if skin_imperfections > 0:
-                prompt.append(applyWeight('skin imperfections',skin_imperfections))
+                prompt.append(applyWeight('skin imperfections', skin_imperfections))
 
             if skin_acne > 0:
-                prompt.append(applyWeight('acne, skin with acne',skin_acne))
+                prompt.append(applyWeight('acne, skin with acne', skin_acne))
 
             if wrinkles > 0:
-                prompt.append(applyWeight('wrinkles',wrinkles))
+                prompt.append(applyWeight('wrinkles', wrinkles))
 
             if tanned_skin > 0:
-                prompt.append(applyWeight('tanned skin',tanned_skin))
+                prompt.append(applyWeight('tanned skin', tanned_skin))
 
             if dimples > 0:
-                prompt.append(applyWeight('dimples',dimples))
+                prompt.append(applyWeight('dimples', dimples))
 
             if freckles > 0:
-                prompt.append(applyWeight('freckles',freckles))
+                prompt.append(applyWeight('freckles', freckles))
 
             if moles > 0:
-                prompt.append(applyWeight('moles',moles))
+                prompt.append(applyWeight('moles', moles))
 
             if eyes_details > 0:
-                prompt.append(applyWeight('eyes details',eyes_details))
+                prompt.append(applyWeight('eyes details', eyes_details))
 
             if iris_details > 0:
-                prompt.append(applyWeight('iris details',iris_details))
+                prompt.append(applyWeight('iris details', iris_details))
 
             if circular_iris > 0:
-                prompt.append(applyWeight('circular details',circular_iris))
+                prompt.append(applyWeight('circular details', circular_iris))
 
             if circular_pupil > 0:
-                prompt.append(applyWeight('circular pupil',circular_pupil))
+                prompt.append(applyWeight('circular pupil', circular_pupil))
 
         if len(prompt) > 0:
             prompt = ', '.join(prompt)
             prompt = prompt.lower()
-            return(prompt,)
+            return (prompt,)
         else:
-            return('',)
+            return ('',)
 
-# Portrait Master Style & Pose
+########################################################
+# 3) Portrait Master Style & Pose
+########################################################
 
 class PortraitMasterStylePose:
 
@@ -686,62 +829,98 @@ class PortraitMasterStylePose:
         
         prompt = []
 
+        def name_to_prompt(category, name_value):
+            return PROMPTS_MAP.get(category, {}).get(name_value, name_value)
+
         if text_in != '':
             prompt.append(text_in)
 
         if active:
 
+            # Maquillage
             if makeup == rand_opt:
-                prompt.append('(' + random.choice(lists['makeup']) + ':1.05)')
+                chosen_makeup = random.choice(lists['makeup'])
+                mk_prompt = name_to_prompt('makeup', chosen_makeup)
+                prompt.append(f"({mk_prompt}:1.05)")
             elif makeup != '-':
-                prompt.append(f"({makeup}:1.05)")
+                mk_prompt = name_to_prompt('makeup', makeup)
+                prompt.append(f"({mk_prompt}:1.05)")
 
+            # Pose du modèle
             if model_pose == rand_opt:
-                prompt.append('(' + random.choice(lists['model_pose']) + ':1.25)')
+                chosen_pose = random.choice(lists['model_pose'])
+                pose_prompt = name_to_prompt('model_pose', chosen_pose)
+                prompt.append(f"({pose_prompt}:1.25)")
             elif model_pose != '-':
-                prompt.append(f"({model_pose}:1.25)")
+                pose_prompt = name_to_prompt('model_pose', model_pose)
+                prompt.append(f"({pose_prompt}:1.25)")
 
+            # Vêtements
             if clothes == rand_opt:
-                prompt.append('(' + random.choice(lists['clothes']) + ':1.25)')
+                chosen_clothes = random.choice(lists['clothes'])
+                clothes_prompt = name_to_prompt('clothes', chosen_clothes)
+                prompt.append(f"({clothes_prompt}:1.25)")
             elif clothes != '-':
-                prompt.append(f"({clothes}:1.25)")
+                clothes_prompt = name_to_prompt('clothes', clothes)
+                prompt.append(f"({clothes_prompt}:1.25)")
 
+            # Lingerie féminine
             if female_lingerie == rand_opt:
-                prompt.append('(' + random.choice(lists['female_lingerie']) + ':1.25)')
+                chosen_lingerie = random.choice(lists['female_lingerie'])
+                lingerie_prompt = name_to_prompt('female_lingerie', chosen_lingerie)
+                prompt.append(f"({lingerie_prompt}:1.25)")
             elif female_lingerie != '-':
-                prompt.append(f"({female_lingerie}:1.25)")
+                lingerie_prompt = name_to_prompt('female_lingerie', female_lingerie)
+                prompt.append(f"({lingerie_prompt}:1.25)")
 
+            # Lumière (type + direction)
             if light_type == rand_opt:
-                prompt.append(applyWeight(random.choice(lists['light_type']),light_weight))
+                chosen_light_type = random.choice(lists['light_type'])
+                light_type_prompt = name_to_prompt('light_type', chosen_light_type)
+                prompt.append(applyWeight(light_type_prompt, light_weight))
             elif light_type != '-':
-                prompt.append(applyWeight(light_type,light_weight))
+                light_type_prompt = name_to_prompt('light_type', light_type)
+                prompt.append(applyWeight(light_type_prompt, light_weight))
 
             if light_direction == rand_opt:
-                prompt.append(applyWeight(random.choice(lists['light_direction']),light_weight))
+                chosen_light_dir = random.choice(lists['light_direction'])
+                light_dir_prompt = name_to_prompt('light_direction', chosen_light_dir)
+                prompt.append(applyWeight(light_dir_prompt, light_weight))
             elif light_direction != '-':
-                prompt.append(applyWeight(light_direction,light_weight))
+                light_dir_prompt = name_to_prompt('light_direction', light_direction)
+                prompt.append(applyWeight(light_dir_prompt, light_weight))
 
+            # Styles 1 et 2
             if style_1 == rand_opt:
-                prompt.append(applyWeight(random.choice(lists['style']),style_1_weight))
+                chosen_style_1 = random.choice(lists['style'])
+                style_1_prompt = name_to_prompt('style', chosen_style_1)
+                prompt.append(applyWeight(style_1_prompt, style_1_weight))
             elif style_1 != '-':
-                prompt.append(applyWeight(style_1,style_1_weight))
+                style_1_prompt = name_to_prompt('style', style_1)
+                prompt.append(applyWeight(style_1_prompt, style_1_weight))
 
             if style_2 == rand_opt:
-                prompt.append(applyWeight(random.choice(lists['style']),style_2_weight))
+                chosen_style_2 = random.choice(lists['style'])
+                style_2_prompt = name_to_prompt('style', chosen_style_2)
+                prompt.append(applyWeight(style_2_prompt, style_2_weight))
             elif style_2 != '-':
-                prompt.append(applyWeight(style_2,style_2_weight))
+                style_2_prompt = name_to_prompt('style', style_2)
+                prompt.append(applyWeight(style_2_prompt, style_2_weight))
 
+            # Photoréalisme
             if photorealism_improvement:
                 prompt.append('(professional photo, balanced photo, balanced exposure:1.2)')
 
         if len(prompt) > 0:
             prompt = ', '.join(prompt)
             prompt = prompt.lower()
-            return(prompt,)
+            return (prompt,)
         else:
-            return('',)
+            return ('',)
 
-# Portrait Master Makeup
+########################################################
+# 4) Portrait Master Makeup
+########################################################
 
 class PortraitMasterMakeup:
 
@@ -797,47 +976,64 @@ class PortraitMasterMakeup:
         
         prompt = []
 
+        def name_to_prompt(category, name_value):
+            return PROMPTS_MAP.get(category, {}).get(name_value, name_value)
+
         if text_in != '':
             prompt.append(text_in)
 
         if active:
 
+            # Style de maquillage
             if makeup_style == rand_opt:
-                prompt.append('(' + random.choice(lists['makeup']) + ':1.05)')
+                chosen_style = random.choice(lists['makeup'])
+                style_prompt = name_to_prompt('makeup', chosen_style)
+                prompt.append(f"({style_prompt}:1.05)")
             elif makeup_style != '-':
-                prompt.append(f"({makeup_style}:1.05)")
+                style_prompt = name_to_prompt('makeup', makeup_style)
+                prompt.append(f"({style_prompt}:1.05)")
 
+            # Couleur de maquillage
             if makeup_color == rand_opt:
-                prompt.append('(' + random.choice(lists['makeup_color']) + ' make-up color:1.05)')
+                chosen_color = random.choice(lists['makeup_color'])
+                color_prompt = name_to_prompt('makeup_color', chosen_color)
+                prompt.append(f"({color_prompt} make-up color:1.05)")
             elif makeup_color != '-':
-                prompt.append(f"({makeup_color} make-up color:1.05)")
+                color_prompt = name_to_prompt('makeup_color', makeup_color)
+                prompt.append(f"({color_prompt} make-up color:1.05)")
 
-            if eyeshadow: prompt.append("(eyeshadow make-up:1.05)")
-            if eyeliner: prompt.append("(eyeliner make-up:1.05)")
-            if mascara: prompt.append("(mascara make-up:1.05)")
-            if blush: prompt.append("(blush make-up:1.05)")
-            if lipstick: prompt.append("(lipstick make-up:1.05)")
-            if lip_gloss: prompt.append("(lip gloss make-up:1.05)")
+            # Éléments de maquillage
+            if eyeshadow:
+                prompt.append("(eyeshadow make-up:1.05)")
+            if eyeliner:
+                prompt.append("(eyeliner make-up:1.05)")
+            if mascara:
+                prompt.append("(mascara make-up:1.05)")
+            if blush:
+                prompt.append("(blush make-up:1.05)")
+            if lipstick:
+                prompt.append("(lipstick make-up:1.05)")
+            if lip_gloss:
+                prompt.append("(lip gloss make-up:1.05)")
 
         if len(prompt) > 0:
             prompt = ', '.join(prompt)
             prompt = prompt.lower()
-            return(prompt,)
+            return (prompt,)
         else:
-            return('',)
+            return ('',)
+
 
 NODE_CLASS_MAPPINGS = {
     "PortraitMasterBaseCharacter": PortraitMasterBaseCharacter,
     "PortraitMasterSkinDetails": PortraitMasterSkinDetails,
     "PortraitMasterStylePose": PortraitMasterStylePose,
-    "PortraitMasterMakeup": PortraitMasterMakeup,
-    "PortraitMaster": PortraitMaster
+    "PortraitMasterMakeup": PortraitMasterMakeup
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PortraitMasterBaseCharacter": "Portrait Master: Base Character",
     "PortraitMasterSkinDetails": "Portrait Master: Skin Details",
     "PortraitMasterStylePose": "Portrait Master: Style & Pose",
-    "PortraitMasterMakeup": "Portrait Master: Make-up",
-    "PortraitMaster": "Portrait Master 2.9.2 (Legacy)"
+    "PortraitMasterMakeup": "Portrait Master: Make-up"
 }

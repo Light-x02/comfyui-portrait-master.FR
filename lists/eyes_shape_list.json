@@ -1,0 +1,14 @@
+[
+    {"name": "Forme des yeux en amande", "prompt": "Almond Eyes Shape"},
+    {"name": "Forme des yeux asiatiques", "prompt": "Asian Eyes Shape"},
+    {"name": "Yeux rapprochés", "prompt": "Close-Set Eyes Shape"},
+    {"name": "Yeux profondément enfoncés", "prompt": "Deep Set Eyes Shape"},
+    {"name": "Yeux tombants", "prompt": "Downturned Eyes Shape"},
+    {"name": "Yeux à double paupière", "prompt": "Double Eyelid Eyes Shape"},
+    {"name": "Yeux hooded", "prompt": "Hooded Eyes Shape"},
+    {"name": "Yeux à paupière monolide", "prompt": "Monolid Eyes Shape"},
+    {"name": "Yeux ovales", "prompt": "Oval Eyes Shape"},
+    {"name": "Yeux proéminents", "prompt": "Protruding Eyes Shape"},
+    {"name": "Yeux ronds", "prompt": "Round Eyes Shape"},
+    {"name": "Yeux relevés", "prompt": "Upturned Eyes Shape"}
+]

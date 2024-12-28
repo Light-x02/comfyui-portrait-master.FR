@@ -1,0 +1,12 @@
+[
+    {"name": "Albinos", "prompt": "Albino"},
+    {"name": "Ambre", "prompt": "Amber"},
+    {"name": "Bleu", "prompt": "Blue"},
+    {"name": "Marron", "prompt": "Brown"},
+    {"name": "Vert", "prompt": "Green"},
+    {"name": "Gris", "prompt": "Gray"},
+    {"name": "Noisette", "prompt": "Hazel"},
+    {"name": "Hétérochromie", "prompt": "Heterochromia"},
+    {"name": "Rouge", "prompt": "Red"},
+    {"name": "Violet", "prompt": "Violet"}
+]

@@ -1,0 +1,22 @@
+[
+    {"name": "Robe bohème", "prompt": "Bohemian Dress"},
+    {"name": "Tenue décontractée professionnelle", "prompt": "Business Casual Dress"},
+    {"name": "Tenue formelle d'affaires", "prompt": "Business Formal Dress"},
+    {"name": "Tenue professionnelle d'affaires", "prompt": "Business Professional Dress"},
+    {"name": "Tenue décontractée chic", "prompt": "Casual Chic Dress"},
+    {"name": "Tenue décontractée", "prompt": "Casual Dress"},
+    {"name": "Robe de club", "prompt": "Club Dress"},
+    {"name": "Robe cocktail", "prompt": "Cocktail Dress"},
+    {"name": "Tenue audacieuse", "prompt": "Edgy Dress"},
+    {"name": "Tenue formelle", "prompt": "Formal Dress"},
+    {"name": "Tenue gothique", "prompt": "Gothic Dress"},
+    {"name": "Tenue hipster", "prompt": "Hipster Dress"},
+    {"name": "Robe de soirée", "prompt": "Party Dress"},
+    {"name": "Tenue preppy", "prompt": "Preppy Dress"},
+    {"name": "Tenue punk", "prompt": "Punk Dress"},
+    {"name": "Tenue rétro", "prompt": "Retro Dress"},
+    {"name": "Tenue décontractée élégante", "prompt": "Smart Casual Dress"},
+    {"name": "Tenue sportive", "prompt": "Sporty Dress"},
+    {"name": "Tenue streetwear", "prompt": "Streetwear Dress"},
+    {"name": "Tenue vintage", "prompt": "Vintage Dress"}
+]

@@ -1,0 +1,12 @@
+[
+    {"name": "Lumière venant du haut", "prompt": "Light from top"},
+    {"name": "Lumière venant du bas", "prompt": "Light from bottom"},
+    {"name": "Lumière venant de droite", "prompt": "Light from right"},
+    {"name": "Lumière venant de gauche", "prompt": "Light from left"},
+    {"name": "Lumière venant de devant", "prompt": "Light from front"},
+    {"name": "Lumière venant de derrière", "prompt": "Light from rear"},
+    {"name": "Lumière venant du haut-droit", "prompt": "Light from top-right"},
+    {"name": "Lumière venant du haut-gauche", "prompt": "Light from top-left"},
+    {"name": "Lumière venant du bas-droit", "prompt": "Light from bottom-right"},
+    {"name": "Lumière venant du bas-gauche", "prompt": "Light from bottom-left"}
+]

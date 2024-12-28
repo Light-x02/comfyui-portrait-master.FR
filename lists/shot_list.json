@@ -1,0 +1,10 @@
+[
+    {"name": "Portrait de tête", "prompt": "Head portrait"},
+    {"name": "Portrait tête et épaules", "prompt": "Head and shoulders portrait"},
+    {"name": "Portrait mi-long", "prompt": "Half-length portrait"},
+    {"name": "Portrait en pied", "prompt": "Full-length portrait"},
+    {"name": "Visage", "prompt": "Face"},
+    {"name": "Portrait", "prompt": "Portrait"},
+    {"name": "Corps entier", "prompt": "Full body"},
+    {"name": "Gros plan", "prompt": "Close-up"}
+]
